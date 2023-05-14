@@ -10,8 +10,10 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 
 const usersRoutes = require("./Routes/users")
+const recipeRoutes = require("./Routes/recipes")
 
 app.use('/users', usersRoutes);
+app.use('/recipes', recipeRoutes);
 
 
 app.get("/",(req, res) => {
