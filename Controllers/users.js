@@ -35,7 +35,15 @@ let register = async (req, res) => {
     }
 
     console.log(results);
-    return res.status(200).json( results );
+    let token = {
+      fullName: fullName,
+      userId: results.insertId,
+    };
+
+
+
+    let signedToken = jwt.sign(token, process.env.JWT_SECRET);
+    return res.status(200).json( {token: signedToken} );
 
   });
 };
