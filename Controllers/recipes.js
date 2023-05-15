@@ -15,7 +15,7 @@ const createRecipe = (req, res) => {
             console.log("There is an error ", err);
             return res.status(500).json({err});
           }
-          return res.json({results})
+          return res.json(results)
     })
 }
 const getRecipesByUserId = (req, res) => {
@@ -28,7 +28,7 @@ const getRecipesByUserId = (req, res) => {
             console.log("There is an error ", err);
             return res.status(500).json({err});
         }
-        return res.json({rows})
+        return res.json(rows)
     })
 }
 const getAllRecipes = (req, res) => {
@@ -40,7 +40,7 @@ const getAllRecipes = (req, res) => {
             console.log("There is an error ", err);
             return res.status(500).json({err});
         }
-        return res.json({rows})
+        return res.json(rows)
     })
 }
 const deleteRecipe = (req, res) => {
@@ -53,7 +53,7 @@ const deleteRecipe = (req, res) => {
             console.log("There is an error ", err);
             return res.status(500).json({err});
         }
-        return res.json({results})
+        return res.json(results)
     })
 }
 

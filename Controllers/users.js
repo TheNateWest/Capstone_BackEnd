@@ -4,11 +4,11 @@ let jwt = require("jsonwebtoken");
 
 let register = async (req, res) => {
   // {"userName": "nwest", "password": "bob12345": "Nate West"}
-  console.log('inside /POST register route')
+  console.log("inside /POST register route");
   let username = req.body.username;
   let password = req.body.password;
   let fullName = req.body.fullName;
-let email = req.body.email;
+  let email = req.body.email;
   let passwordHash;
 
   try {
@@ -27,18 +27,17 @@ let email = req.body.email;
   let sql =
     "insert into regUser (username, password_hash, full_name, email) values (?, ?, ?, ?)";
 
-  try {
-    let results = await db.query(sql, params);
-    res.sendStatus(200);
-  } catch (err) {
-    console.log(err);
-    if (err.code == "ER_DUP_ENTRY") {
-      res.status(400).send("That username is taken. Please try again.");
-    } else {
-      res.sendStatus(500);
+  db.query(sql, params, (err, results) => {
+    if (err) {
+      res
+        .status(400)
+        .json({ msg: "That username is taken. Please try again.", err });
     }
-    return;
-  }
+
+    console.log(results);
+    return res.status(200).json( results );
+
+  });
 };
 
 let login = (req, res) => {
@@ -93,7 +92,7 @@ let login = (req, res) => {
           let signedToken = jwt.sign(token, process.env.JWT_SECRET);
 
           // res.json(signedToken);
-          res.status(200).json({token: signedToken});
+          res.status(200).json({ token: signedToken });
 
           // eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmdWxsTmFtZSI6Ik5hdGUgV2VzdCIsInVzZXJJZCI6MSwiaWF0IjoxNjgwMTkxMjM3fQ.u8oSD8M9Au1NJoVM_ZLlYOmcQwpG1L6CFiAMED_WgPI
         } else {
@@ -105,54 +104,63 @@ let login = (req, res) => {
 }; // end of the function
 
 const getAllUsers = (req, res) => {
-    console.log('Inside GET users route')
-    db.query("SELECT * FROM regUser", (err, rows) => {
-        if(err){
-            return res.json(err)
-        }
-        res.json(rows)
-    })
-}
+  console.log("Inside GET users route");
+  db.query("SELECT * FROM regUser", (err, rows) => {
+    if (err) {
+      return res.json(err);
+    }
+    res.json(rows);
+  });
+};
 
 const getUserById = (req, res) => {
-    console.log('Inside GET userById route')
-    const userId = req.params.id
-    const sql = "SELECT * FROM regUser WHERE id = ?"
-    db.query(sql, [userId], (err, rows) => {
-        if(err){
-            return res.status(500).json(err)
-        }
-        res.status(200).json(rows)
-    })
-}
-
-
+  console.log("Inside GET userById route");
+  const userId = req.params.id;
+  const sql = "SELECT * FROM regUser WHERE id = ?";
+  db.query(sql, [userId], (err, rows) => {
+    if (err) {
+      return res.status(500).json(err);
+    }
+    res.status(200).json(rows);
+  });
+};
 
 const updateUser = (req, res) => {
-    console.log('Inside PUT updateUser route')
-    const id = req.params.id
-    const {full_name, email, username} = req.body
-    const body = [full_name, email, username, id]
-    const sql = "UPDATE regUser SET full_name = ?, email = ?, username = ?, WHERE id = ?"
-    db.query(sql, body, (err, results) => {
-        if(err){
-            return res.status(500).json(err)
-        }
-        res.status(200).json({status: 'success', message: `User updated`, results})
-    })
-}
+  console.log("Inside PUT updateUser route");
+  const id = req.params.id;
+  const { full_name, email, username } = req.body;
+  const body = [full_name, email, username, id];
+  const sql =
+    "UPDATE regUser SET full_name = ?, email = ?, username = ?, WHERE id = ?";
+  db.query(sql, body, (err, results) => {
+    if (err) {
+      return res.status(500).json(err);
+    }
+    res
+      .status(200)
+      .json({ status: "success", message: `User updated`, results });
+  });
+};
 
 const deleteUser = (req, res) => {
-    console.log('Inside DELETE userRoute')
-    const id = req.params.id
-    const sql = "DELETE FROM regUser WHERE id = ?"
-    db.query(sql, [id], (err,results) => {
-        if(err){
-            return res.status(500).json(err)
-        }
-        res.status(200).json({status: 'success', message: `User deleted`, results})
-    })
+  console.log("Inside DELETE userRoute");
+  const id = req.params.id;
+  const sql = "DELETE FROM regUser WHERE id = ?";
+  db.query(sql, [id], (err, results) => {
+    if (err) {
+      return res.status(500).json(err);
+    }
+    res
+      .status(200)
+      .json({ status: "success", message: `User deleted`, results });
+  });
+};
 
-}
-
-module.exports = { register, login, getAllUsers, getUserById, updateUser, deleteUser };
+module.exports = {
+  register,
+  login,
+  getAllUsers,
+  getUserById,
+  updateUser,
+  deleteUser,
+};
