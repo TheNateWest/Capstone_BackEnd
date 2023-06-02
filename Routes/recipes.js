@@ -7,7 +7,7 @@ router.post("/save-recipe", checkJWT, recipesController.createRecipe)
 router.get("/all-user-recipes", checkJWT, recipesController.getRecipesByUserId)
 router.get("/all-recipes", recipesController.getAllRecipes)
 
-router.delete("/delete-recipe/:id", recipesController.deleteRecipe)
+router.delete("/delete-recipe/:id", checkJWT, recipesController.deleteRecipe)
 
 
 
